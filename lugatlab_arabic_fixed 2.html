@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lug‘atLab Arabic</title>
+<style>
+:root{--bg:#101827;--panel:#1d2a3c;--panel2:#26364a;--gold:#e4c57d;--text:#f5f7fb;--muted:#b9c4d2;--line:#35465b;--good:#75d6a0;--bad:#ff9c9c}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(140deg,#101827,#17263a);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+.app{max-width:1050px;margin:auto;padding:18px}.top{display:flex;align-items:center;gap:13px;margin:8px 0 20px}.logo{background:var(--gold);color:#182334;border-radius:14px;padding:12px;font-size:24px}.top h1{margin:0;font-size:1.35rem}.top p{margin:2px 0;color:var(--muted);font-size:.9rem}
+nav{display:flex;gap:8px;overflow:auto;padding-bottom:10px;margin-bottom:14px}button,.tab{cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:11px;padding:10px 13px;font-weight:600}button:hover,.tab.active{border-color:var(--gold);color:var(--gold)}button.primary{background:var(--gold);color:#182334;border-color:var(--gold)}button:disabled{opacity:.45;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.three{grid-template-columns:repeat(3,minmax(0,1fr))}.card{background:rgba(29,42,60,.96);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}.card h2,.card h3{margin:0 0 12px}.muted{color:var(--muted)}.stat{font-size:1.8rem;color:var(--gold);font-weight:800}.bar{height:8px;border-radius:9px;background:#3a4a5d;overflow:hidden;margin-top:8px}.bar span{display:block;height:100%;background:var(--gold);width:0}input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:#111c2b;color:var(--text);padding:11px;margin:5px 0 12px;font:inherit}textarea{min-height:110px;resize:vertical}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.word{font-size:2rem;color:var(--gold);text-align:center;margin:15px 0}.center{text-align:center}.hidden{display:none}.pill{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:4px 9px;color:var(--muted);font-size:.85rem}.result{padding:12px;border-radius:10px;background:#142235;margin-top:10px}.good{color:var(--good)}.bad{color:var(--bad)}.listrow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.listrow:last-child{border:0}.avatar{width:74px;height:74px;border-radius:50%;background:var(--gold);color:#182334;display:grid;place-items:center;font-size:1.7rem;font-weight:800;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}.small{font-size:.85rem}@media(max-width:650px){.app{padding:12px}.grid,.three{grid-template-columns:1fr}.top h1{font-size:1.15rem}button,.tab{padding:9px 11px}}
+</style>
+</head>
+<body><main class="app">
+<header class="top"><div class="logo">أ</div><div><h1>Lug‘atLab Arabic</h1><p>Arab tilini o‘rganish maydoni</p></div></header>
+<nav id="nav">
+<button class="tab active" data-page="home">Bosh sahifa</button><button class="tab" data-page="words">Lug‘atlar</button><button class="tab" data-page="mistakes">Xatolar</button><button class="tab" data-page="exam">CEFR imtihoni</button><button class="tab" data-page="books">Kitoblar</button><button class="tab" data-page="profile">Profil</button>
+</nav>
+<section id="home" class="page">
+<div class="grid">
+<div class="card"><h2 id="welcome">Marhabo!</h2><p class="muted">Bugungi maqsad: lug‘atlarni takrorlash va bilimingizni sinash.</p><div class="actions"><button class="primary" onclick="go('words')">Lug‘atlarni boshlash →</button><button onclick="go('exam')">Imtihonga o‘tish</button></div></div>
+<div class="card"><h3>Kitob bo‘yicha progress</h3><div class="stat" id="progressText">0%</div><div class="bar"><span id="progressBar"></span></div><p class="muted small" id="progressCount">0 / 0 lug‘at yodlangan</p></div>
+</div>
+<div class="grid three"><div class="card"><p class="muted">Jami lug‘at</p><div class="stat" id="totalStat">0</div></div><div class="card"><p class="muted">Yodlangan</p><div class="stat" id="knownStat">0</div></div><div class="card"><p class="muted">Takrorlash kerak</p><div class="stat" id="mistakeStat">0</div></div></div>
+<div class="card"><h3>So‘nggi natijalar</h3><div id="recentResults" class="muted">Hali imtihon natijasi yo‘q.</div></div>
+</section>
+<section id="words" class="page hidden">
+<div class="card"><h2>Lug‘at kartochkalari</h2><label class="muted">Kitobni tanlang</label><select id="bookSelect" onchange="renderWord()"></select><p class="muted small" id="wordCounter"></p><div class="word" id="wordArabic">أهلاً</div><div class="center"><button onclick="revealWord()">Ma’nosini ko‘rish</button></div><div id="wordMeaning" class="center hidden"></div><div class="actions"><button onclick="markWord(false)">Qiyin bo‘ldi — xatolarga qo‘shish</button><button class="primary" onclick="markWord(true)">Bildim ✓</button><button onclick="nextWord()">Keyingi →</button></div></div>
+<div class="card"><h3>Yangi lug‘at qo‘shish</h3><div class="grid"><div><label class="muted">Arabcha</label><input id="newAr" placeholder="مكتبة"></div><div><label class="muted">O‘zbekcha ma’nosi</label><input id="newUz" placeholder="kutubxona"></div></div><button class="primary" onclick="addWord()">Lug‘atni saqlash</button><p class="muted small">Ma’lumotlar shu brauzerda saqlanadi.</p></div>
+</section>
+<section id="mistakes" class="page hidden"><div class="card"><h2>Xatolarni takrorlash</h2><p class="muted">Qiyin bo‘lgan lug‘atlaringiz shu yerda yig‘iladi.</p><div id="mistakeList"></div></div></section>
+<section id="exam" class="page hidden"><div class="card"><h2>Ko‘nikma imtihoni</h2><p class="muted">Hozircha bu bo‘lim demo savollar bilan ishlaydi. Haqiqiy AI baholashi uchun server va AI API kaliti ulanishi kerak.</p><label>Ko‘nikma</label><select id="skill" onchange="loadExam()"><option>O‘qish</option><option>Tinglash</option><option>Yozish</option><option>Gapirish</option></select><div id="examArea"></div><div id="examFeedback"></div></div></section>
+<section id="books" class="page hidden"><div class="card"><h2>Kitoblarim</h2><div id="bookList"></div><h3>Yangi kitob qo‘shish</h3><input id="newBook" placeholder="Masalan: Arab tili — 2-kitob"><button class="primary" onclick="addBook()">Kitob qo‘shish</button></div></section>
+<section id="profile" class="page hidden"><div class="card"><h2>Shaxsiy profil</h2><div class="center"><div class="avatar" id="avatar">ع</div><h3 id="profileNameView">Arab tili o‘rganuvchisi</h3><label class="muted small">Avatar uchun rasm tanlash</label><input type="file" id="avatarFile" accept="image/*" onchange="uploadAvatar()"></div><label>Ism</label><input id="profileName" placeholder="Ismingiz"><label>Taxminiy CEFR darajasi (demo)</label><select id="cefr"><option>A1</option><option>A2</option><option selected>B1</option><option>B2</option><option>C1</option><option>C2</option></select><button class="primary" onclick="saveProfile()">Profilni saqlash</button><p class="muted small">Daraja bu yerda qo‘lda kiritiladi; avtomatik CEFR baholashi hali ulanmagan.</p></div><div class="card"><h3>Imtihon tarixi</h3><div id="examHistory" class="muted">Hali natija yo‘q.</div></div></section>
+<footer class="muted small center">Lug‘atLab Arabic · MVP demo · ma’lumotlar ushbu brauzerda saqlanadi</footer>
+</main>
+<script>
+const KEY='lugatlab-arabic-v1';
+const initial={profile:{name:'Abdulbosit',cefr:'B1',avatar:''},books:[{id:1,name:'Arab tili — 1-kitob'}],selectedBook:1,words:[
+{id:1,bookId:1,ar:'اجتهد',uz:'tirishmoq',known:false,wrong:false},{id:2,bookId:1,ar:'يتجنب',uz:'chetlanmoq',known:false,wrong:false},{id:3,bookId:1,ar:'تفوق',uz:'ustun kelmoq',known:false,wrong:false},{id:4,bookId:1,ar:'البحث',uz:'izlash / tadqiqot',known:true,wrong:false},{id:5,bookId:1,ar:'الهدف',uz:'maqsad',known:true,wrong:false},{id:6,bookId:1,ar:'استعار',uz:'qarzga / vaqtincha oldi',known:false,wrong:false}],history:[],wordIndex:0};
+function cloneInitial(){return JSON.parse(JSON.stringify(initial))}
+function readSavedState(){
+  try {
+    const raw = window.localStorage.getItem(KEY);
+    if (!raw) return cloneInitial();
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.books) || !Array.isArray(parsed.words)) return cloneInitial();
+    return parsed;
+  } catch (e) {
+    // iOS may block storage when an HTML file is opened directly from Files.
+    return cloneInitial();
+  }
+}
+let state = readSavedState();
+let storageAvailable = true;
+function save(){
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify(state));
+    storageAvailable = true;
+  } catch (e) {
+    storageAvailable = false;
+  }
+  renderStats();
+}
+function go(page){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('hidden',p.id!==page));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='words')renderWord();if(page==='mistakes')renderMistakes();if(page==='books')renderBooks();if(page==='profile')renderProfile();if(page==='exam')loadExam();renderStats()}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+function currentWords(){return state.words.filter(w=>w.bookId===Number(state.selectedBook))}
+function renderStats(){let ws=currentWords(),known=ws.filter(w=>w.known).length,pct=ws.length?Math.round(known/ws.length*100):0;document.getElementById('welcome').textContent='Marhabo, '+(state.profile.name||'o‘rganuvchi')+'!';document.getElementById('progressText').textContent=pct+'%';document.getElementById('progressBar').style.width=pct+'%';document.getElementById('progressCount').textContent=known+' / '+ws.length+' lug‘at yodlangan';document.getElementById('totalStat').textContent=ws.length;document.getElementById('knownStat').textContent=known;document.getElementById('mistakeStat').textContent=state.words.filter(w=>w.wrong).length;let recent=state.history.slice(-3).reverse();document.getElementById('recentResults').innerHTML=recent.length?recent.map(r=>`<div class="listrow"><span>${esc(r.skill)} · ${esc(r.date)}</span><b>${r.score}%</b></div>`).join(''):'Hali imtihon natijasi yo‘q.';let bs=document.getElementById('bookSelect');if(bs){bs.innerHTML=state.books.map(b=>`<option value="${b.id}" ${b.id===Number(state.selectedBook)?'selected':''}>${esc(b.name)}</option>`).join('')}}
+function renderWord(){let ws=currentWords();if(!ws.length){document.getElementById('wordArabic').textContent='Bu kitobda lug‘at yo‘q';document.getElementById('wordMeaning').classList.add('hidden');return}state.wordIndex=((state.wordIndex%ws.length)+ws.length)%ws.length;let w=ws[state.wordIndex];document.getElementById('wordCounter').textContent=`${state.wordIndex+1} / ${ws.length} · ${w.known?'Yodlangan':'Takrorlash kerak'}`;document.getElementById('wordArabic').textContent=w.ar;document.getElementById('wordMeaning').textContent=w.uz;document.getElementById('wordMeaning').classList.add('hidden');save()}
+function revealWord(){document.getElementById('wordMeaning').classList.remove('hidden')}
+function nextWord(){state.wordIndex++;renderWord()}
+function markWord(known){let ws=currentWords(),w=ws[state.wordIndex];if(!w)return;w.known=known;if(!known)w.wrong=true;else w.wrong=false;state.wordIndex++;save();renderWord()}
+function addWord(){let ar=document.getElementById('newAr').value.trim(),uz=document.getElementById('newUz').value.trim();if(!ar||!uz)return alert('Arabcha so‘z va ma’nosini kiriting.');state.words.push({id:Date.now(),bookId:Number(state.selectedBook),ar,uz,known:false,wrong:false});document.getElementById('newAr').value='';document.getElementById('newUz').value='';save();renderWord()}
+function renderMistakes(){let ws=state.words.filter(w=>w.wrong),el=document.getElementById('mistakeList');el.innerHTML=ws.length?ws.map(w=>`<div class="listrow"><span><b dir="rtl">${esc(w.ar)}</b> — ${esc(w.uz)}<br><span class="muted small">${esc((state.books.find(b=>b.id===w.bookId)||{}).name||'Kitob')}</span></span><button onclick="clearMistake(${w.id})">Tuzatdim ✓</button></div>`).join(''):'Hozircha xatolar yo‘q. Lug‘at kartochkasida “Qiyin bo‘ldi”ni bosing.'}
+function clearMistake(id){let w=state.words.find(w=>w.id===id);if(w){w.wrong=false;w.known=true}save();renderMistakes()}
+function addBook(){let name=document.getElementById('newBook').value.trim();if(!name)return;let id=Date.now();state.books.push({id,name});state.selectedBook=id;state.wordIndex=0;document.getElementById('newBook').value='';save();renderBooks();renderWord()}
+function renderBooks(){document.getElementById('bookList').innerHTML=state.books.map(b=>{let ws=state.words.filter(w=>w.bookId===b.id),k=ws.filter(w=>w.known).length,p=ws.length?Math.round(k/ws.length*100):0;return `<div class="listrow"><div><b>${esc(b.name)}</b><div class="muted small">${k}/${ws.length} yodlangan · ${p}%</div></div><button onclick="selectBook(${b.id})">Ochish</button></div>`}).join('')}
+function selectBook(id){state.selectedBook=id;state.wordIndex=0;save();go('words')}
+function renderProfile(){document.getElementById('profileName').value=state.profile.name||'';document.getElementById('cefr').value=state.profile.cefr||'B1';document.getElementById('profileNameView').textContent=state.profile.name||'Arab tili o‘rganuvchisi';let av=document.getElementById('avatar');av.innerHTML=state.profile.avatar?`<img src="${state.profile.avatar}" alt="Avatar">`:'ع';document.getElementById('examHistory').innerHTML=state.history.length?state.history.slice().reverse().map(r=>`<div class="listrow"><span>${esc(r.skill)} · ${esc(r.date)}</span><b>${r.score}%</b></div>`).join(''):'Hali natija yo‘q.'}
+function saveProfile(){state.profile.name=document.getElementById('profileName').value.trim()||'Arab tili o‘rganuvchisi';state.profile.cefr=document.getElementById('cefr').value;save();renderProfile();alert('Profil saqlandi.')}
+function uploadAvatar(){let f=document.getElementById('avatarFile').files[0];if(!f)return;if(f.size>1500000)return alert('Iltimos, 1.5 MB dan kichikroq rasm tanlang.');let rd=new FileReader();rd.onload=()=>{state.profile.avatar=rd.result;save();renderProfile()};rd.readAsDataURL(f)}
+const questions=[{q:'اقرأ: ذهب الطالب إلى المكتبة ليستعير كتابًا. لماذا ذهب إلى المكتبة؟',opts:['ليشتري طعامًا','ليستعير كتابًا','ليلعب'],correct:1,ex:'ليستعير كتابًا — kitobni vaqtincha olish uchun.'},{q:'ما معنى كلمة «الهدف»؟',opts:['Maqsad','Deraza','Safar'],correct:0,ex:'الهدف — maqsad.'},{q:'اختر الجملة الصحيحة:',opts:['لم يكتبْ الطالبُ','لم يكتبُ الطالبُ','لم يكتبَ الطالبُ'],correct:0,ex:'لم dan keyin muzori’ fe’l majzum bo‘ladi: يكتبْ.'}];let qi=0;
+function loadExam(){let skill=document.getElementById('skill').value,area=document.getElementById('examArea');document.getElementById('examFeedback').innerHTML='';if(skill==='O‘qish'){area.innerHTML=`<p dir="rtl">${questions[qi%questions.length].q}</p>`+questions[qi%questions.length].opts.map((o,i)=>`<label class="listrow"><span>${esc(o)}</span><input style="width:auto;margin:0" type="radio" name="answer" value="${i}"></label>`).join('')+`<button class="primary" onclick="submitReading()">Javobni tekshirish</button>`}else if(skill==='Tinglash'){area.innerHTML='<p>Demo: tinglash imtihoni uchun audio fayl yoki matndan audio yaratish xizmati ulanadi.</p><p class="muted">Hozircha audio va avtomatik baholash mavjud emas.</p>'}else{area.innerHTML=`<label>${skill==='Yozish'?'اكتب فقرة عن أهمية تعلم اللغة العربية.':'تحدث عن نفسك وأهدافك باللغة العربية.'}</label><textarea id="openAnswer" placeholder="Arabcha javobingizni yozing..."></textarea><button class="primary" onclick="submitOpen()">Javobni saqlash</button><p class="muted small">Hozircha avtomatik AI baholashi yo‘q; javob faqat demo sifatida baholanadi.</p>`}}
+function submitReading(){let sel=document.querySelector('input[name="answer"]:checked');if(!sel)return alert('Javob tanlang.');let q=questions[qi%questions.length],ok=Number(sel.value)===q.correct,score=ok?100:0;document.getElementById('examFeedback').innerHTML=`<div class="result ${ok?'good':'bad'}"><b>${ok?'To‘g‘ri!':'Hali xato.'}</b><p>${q.ex}</p><p>Demo natija: ${score}%</p><button onclick="nextQuestion()">Keyingi savol →</button></div>`;state.history.push({skill:'O‘qish',score,date:new Date().toLocaleDateString()});save()}
+function nextQuestion(){qi++;loadExam()}
+function submitOpen(){let val=document.getElementById('openAnswer').value.trim();if(!val)return;let score=null;document.getElementById('examFeedback').innerHTML='<div class="result">Javob demo uchun qabul qilindi. Haqiqiy grammatika, mazmun va CEFR mezonlari bo‘yicha baholash uchun AI server integratsiyasi zarur.</div>';state.history.push({skill:document.getElementById('skill').value,score:0,date:new Date().toLocaleDateString()});save()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+renderStats();renderWord();renderProfile();
+</script></body></html>
